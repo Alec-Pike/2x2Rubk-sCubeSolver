@@ -56,6 +56,7 @@ Layout and tuple subscripts:
 
 Based on the original C++ implementation by tim@tim.id.au
 http://tim.id.au/limejuice/generating-the-full-list-of-valid-states-of-a-2x2-rubiks-cube/
+Translated into Python by Google Gemini
 """
 
 COLOR_MAP = {0: "W", 1: "G", 2: "R", 3: "B", 4: "O", 5: "Y"}

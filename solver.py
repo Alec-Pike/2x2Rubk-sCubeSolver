@@ -6,7 +6,7 @@ class Solver:
 
     ALL_MOVES = {"U", "u", "R", "r", "F", "f"}
 
-    def __init__(self, alg: Callable, initial_state: tuple[int, ...] = PocketCube.DEFAULT_STATE):
+    def __init__(self, alg: Callable, initial_state: Optional[tuple[int, ...]] = PocketCube.DEFAULT_STATE):
         self.cube = PocketCube(initial_state)
         self.available_moves = set(Solver.ALL_MOVES)
         self.alg = alg
@@ -30,30 +30,42 @@ class Solver:
         return self.cube.state == PocketCube.DEFAULT_STATE
 
 
-    def scramble(self, depth: int, rand_seed: int = None):
+    def scramble(self, depth: int, rand_seed: int = None) -> tuple[tuple[int, ...], list[str]]:
         if rand_seed != None:
             random.seed(rand_seed)
-        
+
+        # iterable and always has same ordering
+        # edit suggested by Google Gemini
+        all_moves = sorted(Solver.ALL_MOVES)
+
+        moves_taken = []
         for i in range(depth):
             result = False
+            move = ""
             while not result:
-                result = self._make_move(random.choice(list(Solver.ALL_MOVES)))
+                move = random.choice(all_moves)
+                result = self._make_move(move)
+            moves_taken.append(move)
 
         self.available_moves = set(Solver.ALL_MOVES) # Reset moves
         self.cube.print_cube()
+        return self.cube.state, moves_taken
 
 
+    # method written by Google Gemini
     @staticmethod
     def get_successors(state: tuple[int, ...]) -> list[tuple[tuple[int, ...], str]]:
         """Generates reachable neighbor states and the move used to reach them."""
+        all_moves = sorted(Solver.ALL_MOVES)
         successors = []
-        for move in Solver.ALL_MOVES:
+        for move in all_moves:
             temp_cube = PocketCube(state)
             temp_cube.make_move(move)
             successors.append((temp_cube.state, move))
         return successors
 
 
+    # method written by Google Gemini
     def solve(self, apply_moves: bool = True, **kwargs) -> Optional[list[str]]:
         """Executes self.alg to solve the cube.
 
