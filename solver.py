@@ -66,7 +66,7 @@ class Solver:
 
 
     # method written by Google Gemini
-    def solve(self, apply_moves: bool = True, **kwargs) -> Optional[list[str]]:
+    def solve(self, apply_moves: bool = True, **kwargs) -> tuple[Optional[list[str]], int]:
         """Executes self.alg to solve the cube.
 
         Args:
@@ -75,12 +75,13 @@ class Solver:
 
         Returns:
             List of move characters forming the solution, or None if unsolvable.
+            Integer number of nodes explored. 
         """
         if self.is_solved():
-            return []
+            return [], 0
 
         # Pass state and successor generator to the algorithm
-        solution_path = self.alg(
+        solution_path, nodes_explored = self.alg(
             start_state=self.cube.state,
             goal_state=PocketCube.DEFAULT_STATE,
             get_successors=Solver.get_successors,
@@ -92,4 +93,26 @@ class Solver:
                 self.cube.make_move(move)
             self.available_moves = set(Solver.ALL_MOVES)
 
-        return solution_path
+        return solution_path, nodes_explored
+
+
+if __name__ == "__main__": # testing
+    import algorithms
+
+    bfs_solver = Solver(algorithms.bfs)
+    bfs_solver.cube.print_cube()
+    print("-" * 20)
+    print("After scrambling (depth=5):")
+    scrambled_state, moves_taken = bfs_solver.scramble(5, rand_seed=42)
+    print("Moves taken:", moves_taken)
+    print("-" * 20)
+    print("BFS solution:")
+    print(bfs_solver.solve())
+    print("-" * 20)
+    print("DFS solution:")
+    dfs_solver = Solver(algorithms.dfs, initial_state=scrambled_state)
+    print(dfs_solver.solve(max_depth=15))
+    print("-" * 20)
+    print("A* solution:")
+    a_star_solver = Solver(algorithms.a_star, initial_state=scrambled_state)
+    print(a_star_solver.solve())

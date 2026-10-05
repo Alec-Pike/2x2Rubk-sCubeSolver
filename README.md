@@ -18,10 +18,18 @@ pip install notebook
 
 ## Running the solver
 
-From the project root, run the `main.py`. This is a short test script demonstating the functionality of the solver. 
+From the project root, run the `main.py`. This script will run the three solution algorithms on whatever cube state you input. 
 
 ```bash
 python main.py
+```
+
+`solver.py` and `pocketcube.py` also have brief test demonstrations if you run them directly.
+
+```bash
+python solver.py
+
+python pocketcube.py
 ```
 
 ## Running the benchmark/report notebook

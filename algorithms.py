@@ -8,25 +8,27 @@ def bfs(
     start_state: tuple[int, ...],
     goal_state: tuple[int, ...],
     get_successors: Callable
-) -> Optional[list[str]]:
+) -> tuple[Optional[list[str]], int]:
     """Breadth-First Search implementation."""
     if start_state == goal_state:
-        return []
+        return [], 0
 
     queue = deque([(start_state, [])])
     visited = {start_state}
+    nodes_explored = 0
 
     while queue:
         current_state, path = queue.popleft()
+        nodes_explored += 1
 
         for next_state, move in get_successors(current_state):
             if next_state == goal_state:
-                return path + [move]
+                return path + [move], nodes_explored
             if next_state not in visited:
                 visited.add(next_state)
                 queue.append((next_state, path + [move]))
 
-    return None
+    return None, nodes_explored
 
 
 def dfs(
@@ -34,7 +36,7 @@ def dfs(
     goal_state: tuple[int, ...],
     get_successors: Callable,
     max_depth: Optional[int] = None
-) -> Optional[list[str]]:
+) -> tuple[Optional[list[str]], int]:
     """Depth-First Search (DFS) / Depth-Limited Search (DLS).
 
     Args:
@@ -45,10 +47,15 @@ def dfs(
 
     Returns:
         List of move strings if a path is found, otherwise None.
+        Integer number of states explored.
     """
     path_visited = {start_state}
+    nodes_explored = 0
 
     def _dfs(current_state: tuple[int, ...], path: list[str]) -> Optional[list[str]]:
+        nonlocal nodes_explored
+        nodes_explored += 1
+        
         if current_state == goal_state:
             return path
 
@@ -70,7 +77,7 @@ def dfs(
 
         return None
 
-    return _dfs(start_state, [])
+    return _dfs(start_state, []), nodes_explored
 
 
 def a_star(
@@ -78,7 +85,7 @@ def a_star(
     goal_state: tuple[int, ...],
     get_successors: Callable,
     heuristic: Optional[Callable[[tuple[int, ...], tuple[int, ...]], float]] = None
-) -> Optional[list[str]]:
+) -> tuple[Optional[list[str]], int]:
     """A* Search algorithm."""
     if heuristic is None:
         # Simple heuristic: mismatched sticker count divided by max stickers affected per turn (8)
@@ -90,12 +97,14 @@ def a_star(
     counter = 0  # Priority queue tie-breaker
     open_set = [(heuristic(start_state, goal_state), 0, counter, start_state, [])]
     g_scores = {start_state: 0}
+    nodes_explored = 0
 
     while open_set:
         _, g, _, current_state, path = heapq.heappop(open_set)
+        nodes_explored += 1
 
         if current_state == goal_state:
-            return path
+            return path, nodes_explored
 
         if g > g_scores.get(current_state, float("inf")):
             continue
@@ -111,4 +120,4 @@ def a_star(
                     (tentative_g + h, tentative_g, counter, next_state, path + [move])
                 )
 
-    return None
+    return None, nodes_explored
