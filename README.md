@@ -51,3 +51,9 @@ Files in this project include:
 - `pocketcube.py` — cube representation and move logic
 - `algorithms.py` — specific logic for search algorithms
 - `experiment.ipynb` — report and benchmark tests
+
+## Acknowledgements
+
+The code for this project was directly based on a project by Tim, which can be found here:
+https://tim.id.au/limejuice/generating-the-full-list-of-valid-states-of-a-2x2-rubiks-cube/
+
